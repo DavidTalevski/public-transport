@@ -278,4 +278,100 @@ body {
   .select-button.selected {
     background-color: #f39c12;
   }
+
+  /* District List */
+.district-list-container {
+  margin-top: 10px;
+  min-width: 450px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* District Item */
+.district-item {
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  transition: background 0.2s ease-in-out;
+}
+
+.district-item.selected {
+  background: #e3f2fd;
+  border: 2px solid #3498db;
+}
+
+/* District Header */
+.district-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* District Info */
+.district-info h4 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
+}
+
+.district-info p {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0 0;
+}
+
+/* Button */
+.toggle-button {
+  cursor: pointer;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #3498db;
+  color: #fff;
+  transition: background 0.2s ease-in-out;
+}
+
+.toggle-button:hover {
+  background-color: #2980b9;
+}
+
+/* Stop List */
+.stop-list {
+  margin-top: 10px;
+  padding-left: 15px;
+}
+
+.stop-list-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 5px;
+}
+
+/* Stop Item */
+.stop-item {
+  background: #fff;
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #3498db;
+  margin-bottom: 5px;
+}
+
+.stop-name {
+  font-size: 13px;
+  font-weight: bold;
+  color: #333;
+}
+
+.stop-location {
+  color: #777;
+  font-size: 12px;
+  margin-left: 5px;
+}
   

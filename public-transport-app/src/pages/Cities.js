@@ -1,19 +1,27 @@
+// Cities.jsx
 import React, { useEffect, useState } from 'react';
-import { apiService } from '../api/api'; // Centralized API service
+import { apiService } from '../api/api';
 import CityForm from '../components/CityForm';
+import CityList from '../components/CityList';
+import AddDistrictForm from '../components/AddDistrictForm';
+import AddStopForm from '../components/AddStopForm';
 
 const Cities = () => {
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null); // Track selected district for managing stops
-  const [districtName, setDistrictName] = useState('');
-  const [districtPopulation, setDistrictPopulation] = useState('');
-  const [districtArea, setDistrictArea] = useState('');
-  const [districtLatitude, setDistrictLatitude] = useState('');
-  const [districtLongitude, setDistrictLongitude] = useState('');
-  const [stopName, setStopName] = useState('');
-  const [stopLatitude, setStopLatitude] = useState('');
-  const [stopLongitude, setStopLongitude] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [districtFormData, setDistrictFormData] = useState({
+    name: '',
+    population: '',
+    area: '',
+    latitude: '',
+    longitude: ''
+  });
+  const [stopFormData, setStopFormData] = useState({
+    name: '',
+    latitude: '',
+    longitude: ''
+  });
 
   const fetchCities = async () => {
     try {
@@ -27,60 +35,58 @@ const Cities = () => {
   const deleteCity = async (id) => {
     try {
       await apiService.deleteCity(id);
+      setSelectedCity(null);
+      setSelectedDistrict(null);
       fetchCities();
     } catch (error) {
       console.error('Error deleting city:', error);
     }
   };
 
-  const addDistrict = async () => {
-    if (!selectedCity) {
-      alert('Please select a city first.');
-      return;
-    }
+  const handleAddDistrict = async (e) => {
+    e.preventDefault();
+    if (!selectedCity) return;
 
     try {
       await apiService.addDistrictToCity(selectedCity._id, {
-        name: districtName,
-        population: parseInt(districtPopulation, 10),
-        area: parseFloat(districtArea),
+        ...districtFormData,
+        population: parseInt(districtFormData.population, 10),
+        area: parseFloat(districtFormData.area),
         coordinates: {
-          latitude: parseFloat(districtLatitude),
-          longitude: parseFloat(districtLongitude),
-        },
+          latitude: parseFloat(districtFormData.latitude),
+          longitude: parseFloat(districtFormData.longitude),
+        }
       });
-
-      // Clear district form and refresh data
-      setDistrictName('');
-      setDistrictPopulation('');
-      setDistrictArea('');
-      setDistrictLatitude('');
-      setDistrictLongitude('');
+      setDistrictFormData({
+        name: '',
+        population: '',
+        area: '',
+        latitude: '',
+        longitude: ''
+      });
       fetchCities();
     } catch (error) {
       console.error('Error adding district:', error);
     }
   };
 
-  const addStop = async () => {
-    if (!selectedDistrict) {
-      alert('Please select a district first.');
-      return;
-    }
+  const handleAddStop = async (e) => {
+    e.preventDefault();
+    if (!selectedDistrict) return;
 
     try {
       await apiService.addStopToDistrict(selectedDistrict._id, {
-        name: stopName,
+        name: stopFormData.name,
         location: {
-          latitude: parseFloat(stopLatitude),
-          longitude: parseFloat(stopLongitude),
-        },
+          latitude: parseFloat(stopFormData.latitude),
+          longitude: parseFloat(stopFormData.longitude),
+        }
       });
-
-      // Clear stop form and refresh data
-      setStopName('');
-      setStopLatitude('');
-      setStopLongitude('');
+      setStopFormData({
+        name: '',
+        latitude: '',
+        longitude: ''
+      });
       fetchCities();
     } catch (error) {
       console.error('Error adding stop:', error);
@@ -92,133 +98,39 @@ const Cities = () => {
   }, []);
 
   return (
-    <div className="cities-container">
-      <div className="form-container">
-        <CityForm fetchCities={fetchCities} />
-      </div>
-      <div className="list-container">
-        <h2>List of Cities</h2>
-        <ul className="cities-list">
-          {cities.map((city) => (
-            <li key={city._id} className="city-item">
-              <div>
-                <strong>{city.name}</strong> ({city.country}) - Population: {city.population}, Area: {city.area} sq km
-                <ul className="districts-list">
-                  {city.districts.map((district) => (
-                    <li key={district._id} className="district-item">
-                      {district.name} - Population: {district.population}, Area: {district.area} sq km
-                      <button
-                        onClick={() => setSelectedDistrict(district)}
-                        className={`select-button ${
-                          selectedDistrict && selectedDistrict._id === district._id ? 'selected' : ''
-                        }`}
-                      >
-                        Manage Stops
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <button onClick={() => deleteCity(city._id)} className="delete-button">
-                Delete
-              </button>
-              <button
-                onClick={() => setSelectedCity(city)}
-                className={`select-button ${selectedCity && selectedCity._id === city._id ? 'selected' : ''}`}
-              >
-                Select City
-              </button>
-            </li>
-          ))}
-        </ul>
-        {selectedCity && (
-          <div className="district-form">
-            <h3>Add District to City: {selectedCity.name}</h3>
-            <div className="form-group">
-              <label htmlFor="districtName">Name:</label>
-              <input
-                id="districtName"
-                type="text"
-                value={districtName}
-                onChange={(e) => setDistrictName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="districtPopulation">Population:</label>
-              <input
-                id="districtPopulation"
-                type="number"
-                value={districtPopulation}
-                onChange={(e) => setDistrictPopulation(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="districtArea">Area:</label>
-              <input
-                id="districtArea"
-                type="number"
-                value={districtArea}
-                onChange={(e) => setDistrictArea(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="districtLatitude">Latitude:</label>
-              <input
-                id="districtLatitude"
-                type="number"
-                value={districtLatitude}
-                onChange={(e) => setDistrictLatitude(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="districtLongitude">Longitude:</label>
-              <input
-                id="districtLongitude"
-                type="number"
-                value={districtLongitude}
-                onChange={(e) => setDistrictLongitude(e.target.value)}
-              />
-            </div>
-            <button onClick={addDistrict} className="add-button">
-              Add District
-            </button>
-          </div>
-        )}
-        {selectedDistrict && (
-          <div className="stop-form">
-            <h3>Add Stop to District: {selectedDistrict.name}</h3>
-            <div className="form-group">
-              <label htmlFor="stopName">Stop Name:</label>
-              <input
-                id="stopName"
-                type="text"
-                value={stopName}
-                onChange={(e) => setStopName(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="stopLatitude">Latitude:</label>
-              <input
-                id="stopLatitude"
-                type="number"
-                value={stopLatitude}
-                onChange={(e) => setStopLatitude(e.target.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="stopLongitude">Longitude:</label>
-              <input
-                id="stopLongitude"
-                type="number"
-                value={stopLongitude}
-                onChange={(e) => setStopLongitude(e.target.value)}
-              />
-            </div>
-            <button onClick={addStop} className="add-button">
-              Add Stop
-            </button>
-          </div>
-        )}
+    <div className="container mx-auto p-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div>
+          <h1 className="text-2xl font-bold mb-4">Manage Cities</h1>
+          <CityForm fetchCities={fetchCities} />
+        </div>
+        
+        <div>
+          <CityList
+            cities={cities}
+            selectedCity={selectedCity}
+            selectedDistrict={selectedDistrict}
+            onSelectCity={setSelectedCity}
+            onSelectDistrict={setSelectedDistrict}
+            onDeleteCity={deleteCity}
+          />
+
+          {selectedCity && (
+            <AddDistrictForm
+              formData={districtFormData}
+              setFormData={setDistrictFormData}
+              onSubmit={handleAddDistrict}
+            />
+          )}
+
+          {selectedDistrict && (
+            <AddStopForm
+              formData={stopFormData}
+              setFormData={setStopFormData}
+              onSubmit={handleAddStop}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
