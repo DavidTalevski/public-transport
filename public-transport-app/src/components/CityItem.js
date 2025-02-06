@@ -1,7 +1,7 @@
 import React from 'react';
 import DistrictList from './DistrictList';
 
-const CityItem = ({ city, isSelected, selectedDistrict, onSelectCity, onSelectDistrict, onDelete }) => {
+const CityItem = ({ city, isSelected, selectedDistrict, onSelectCity, onSelectDistrict, onDelete, onAddDistrict, onDeleteDistrict }) => {
   return (
     <li className={`city-item ${isSelected ? 'selected' : ''}`}>
       <div className="city-info">
@@ -11,7 +11,7 @@ const CityItem = ({ city, isSelected, selectedDistrict, onSelectCity, onSelectDi
         </div>
         
         <div className="button-group">
-          <button className="delete-button" onClick={() => onDelete(city._id)}>Delete</button>
+          <button className="delete-button" onClick={() => onDelete(city._id)}>Delete City</button>
           <button className="select-button" onClick={() => onSelectCity(isSelected ? null : city)}>
             {isSelected ? 'Collapse' : 'Manage'}
           </button>
@@ -20,10 +20,19 @@ const CityItem = ({ city, isSelected, selectedDistrict, onSelectCity, onSelectDi
 
       {isSelected && (
         <div className="district-list-container">
+          <button 
+            onClick={() => onAddDistrict(city._id)} 
+            className="add-district-button"
+            style={{ marginBottom: '10px', padding: '8px 12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '5px' }}
+          >
+            Add New District
+          </button>
+
           <DistrictList
             districts={city.districts}
             selectedDistrict={selectedDistrict}
             onSelectDistrict={onSelectDistrict}
+            onDeleteDistrict={onDeleteDistrict}
           />
         </div>
       )}

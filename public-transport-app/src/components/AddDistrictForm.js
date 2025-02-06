@@ -10,26 +10,36 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
   };
 
   return (
-    <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-      <h3 className="text-lg font-semibold mb-4">Add New District</h3>
-      <form onSubmit={onSubmit} className="grid grid-cols-1 gap-3">
+    <form onSubmit={onSubmit} className="city-form">
+      <h2 className="text-2xl font-semibold mb-6">Add New District</h2>
+
+      <div className="form-group">
+        <label htmlFor="name">District Name:</label>
         <input
           name="name"
           value={formData.name}
           onChange={handleChange}
           placeholder="District name"
-          className="p-2 border rounded"
+          className="p-2 border rounded w-full"
           required
         />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="population">Population:</label>
         <input
           name="population"
           type="number"
           value={formData.population}
           onChange={handleChange}
           placeholder="Population"
-          className="p-2 border rounded"
+          className="p-2 border rounded w-full"
           required
         />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="area">Area (sq km):</label>
         <input
           name="area"
           type="number"
@@ -37,10 +47,14 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
           value={formData.area}
           onChange={handleChange}
           placeholder="Area (km²)"
-          className="p-2 border rounded"
+          className="p-2 border rounded w-full"
           required
         />
-        <div className="grid grid-cols-2 gap-3">
+      </div>
+
+      <div className="form-group grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="latitude">Latitude:</label>
           <input
             name="latitude"
             type="number"
@@ -48,9 +62,12 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
             value={formData.latitude}
             onChange={handleChange}
             placeholder="Latitude"
-            className="p-2 border rounded"
+            className="p-2 border rounded w-full"
             required
           />
+        </div>
+        <div>
+          <label htmlFor="longitude">Longitude:</label>
           <input
             name="longitude"
             type="number"
@@ -58,18 +75,19 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
             value={formData.longitude}
             onChange={handleChange}
             placeholder="Longitude"
-            className="p-2 border rounded"
+            className="p-2 border rounded w-full"
             required
           />
         </div>
-        <button
-          type="submit"
-          className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-        >
-          Add District
-        </button>
-      </form>
-    </div>
+      </div>
+
+      <button
+        type="submit"
+        className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full mt-4"
+      >
+        Add District
+      </button>
+    </form>
   );
 };
 

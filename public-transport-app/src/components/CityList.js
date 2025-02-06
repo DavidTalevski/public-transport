@@ -1,7 +1,7 @@
 import React from 'react';
 import CityItem from './CityItem';
 
-const CityList = ({ cities, selectedCity, selectedDistrict, onSelectCity, onSelectDistrict, onDeleteCity }) => {
+const CityList = ({ cities, selectedCity, selectedDistrict, onSelectCity, onSelectDistrict, onAddDistrict, onDeleteDistrict, onDeleteCity }) => {
   return (
     <div className="list-container">
       <h2>Cities List</h2>
@@ -12,6 +12,8 @@ const CityList = ({ cities, selectedCity, selectedDistrict, onSelectCity, onSele
             city={city}
             isSelected={selectedCity?._id === city._id}
             selectedDistrict={selectedDistrict}
+            onAddDistrict={onAddDistrict}
+            onDeleteDistrict={onDeleteDistrict}
             onSelectCity={onSelectCity}
             onSelectDistrict={onSelectDistrict}
             onDelete={onDeleteCity}

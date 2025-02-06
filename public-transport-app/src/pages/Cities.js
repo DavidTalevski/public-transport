@@ -1,24 +1,20 @@
-// Cities.jsx
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../api/api';
 import CityForm from '../components/CityForm';
 import CityList from '../components/CityList';
 import AddDistrictForm from '../components/AddDistrictForm';
-import AddStopForm from '../components/AddStopForm';
+import Modal from '../components/Modal';
 
 const Cities = () => {
   const [cities, setCities] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+  const [isDistrictModalOpen, setIsDistrictModalOpen] = useState(false);  // State for district modal
   const [districtFormData, setDistrictFormData] = useState({
     name: '',
     population: '',
     area: '',
-    latitude: '',
-    longitude: ''
-  });
-  const [stopFormData, setStopFormData] = useState({
-    name: '',
     latitude: '',
     longitude: ''
   });
@@ -43,6 +39,17 @@ const Cities = () => {
     }
   };
 
+  const deleteDistrict = async (districtId) => {
+    if (!selectedCity) return;
+
+    try {
+      await apiService.deleteDistrict(districtId);
+      fetchCities();
+    } catch (error) {
+      console.error('Error deleting district:', error);
+    }
+  };
+
   const handleAddDistrict = async (e) => {
     e.preventDefault();
     if (!selectedCity) return;
@@ -64,34 +71,13 @@ const Cities = () => {
         latitude: '',
         longitude: ''
       });
+      setIsDistrictModalOpen(false);  // Close the district modal after adding
       fetchCities();
     } catch (error) {
       console.error('Error adding district:', error);
     }
   };
 
-  const handleAddStop = async (e) => {
-    e.preventDefault();
-    if (!selectedDistrict) return;
-
-    try {
-      await apiService.addStopToDistrict(selectedDistrict._id, {
-        name: stopFormData.name,
-        location: {
-          latitude: parseFloat(stopFormData.latitude),
-          longitude: parseFloat(stopFormData.longitude),
-        }
-      });
-      setStopFormData({
-        name: '',
-        latitude: '',
-        longitude: ''
-      });
-      fetchCities();
-    } catch (error) {
-      console.error('Error adding stop:', error);
-    }
-  };
 
   useEffect(() => {
     fetchCities();
@@ -102,7 +88,19 @@ const Cities = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div>
           <h1 className="text-2xl font-bold mb-4">Manage Cities</h1>
-          <CityForm fetchCities={fetchCities} />
+          <button 
+            onClick={() => setIsCityModalOpen(true)} 
+            style={{
+              padding: '10px 15px',
+              backgroundColor: '#007bff',
+              color: 'white',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer'
+            }}
+          >
+            Add City
+          </button>
         </div>
         
         <div>
@@ -113,25 +111,27 @@ const Cities = () => {
             onSelectCity={setSelectedCity}
             onSelectDistrict={setSelectedDistrict}
             onDeleteCity={deleteCity}
+            onAddDistrict={() => setIsDistrictModalOpen(true)}  // Open district modal
+            onDeleteDistrict={deleteDistrict}  // Add delete functionality for district
           />
-
-          {selectedCity && (
-            <AddDistrictForm
-              formData={districtFormData}
-              setFormData={setDistrictFormData}
-              onSubmit={handleAddDistrict}
-            />
-          )}
-
-          {selectedDistrict && (
-            <AddStopForm
-              formData={stopFormData}
-              setFormData={setStopFormData}
-              onSubmit={handleAddStop}
-            />
-          )}
         </div>
       </div>
+
+      {isCityModalOpen && (
+        <Modal onClose={() => setIsCityModalOpen(false)}>
+          <CityForm fetchCities={fetchCities} />
+        </Modal>
+      )}
+
+      {isDistrictModalOpen && (
+        <Modal onClose={() => setIsDistrictModalOpen(false)}>
+          <AddDistrictForm
+            formData={districtFormData}
+            setFormData={setDistrictFormData}
+            onSubmit={handleAddDistrict}
+          />
+        </Modal>
+      )}
     </div>
   );
 };
