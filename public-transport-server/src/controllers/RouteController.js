@@ -3,7 +3,7 @@ const Route = require('../models/Route');
 // Get all routes
 exports.getAllRoutes = async (req, res) => {
   try {
-    const routes = await Route.find().populate('stopVisits');
+    const routes = await Route.find().populate('stops').populate("vehicle");
     res.status(200).json(routes);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -13,7 +13,7 @@ exports.getAllRoutes = async (req, res) => {
 // Get a route by ID
 exports.getRouteById = async (req, res) => {
   try {
-    const route = await Route.findById(req.params.id).populate('stopVisits');
+    const route = await Route.findById(req.params.id).populate('stops').populate("vehicle");
     if (!route) return res.status(404).json({ message: 'Route not found' });
     res.status(200).json(route);
   } catch (err) {

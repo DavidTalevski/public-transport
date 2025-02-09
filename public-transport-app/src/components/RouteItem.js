@@ -71,11 +71,11 @@ const RouteItem = ({ route, onDelete, onSelect }) => {
           borderRadius: '4px'
         }}>
           <label style={{ fontSize: '0.9rem', color: '#6c757d', marginBottom: '4px' }}>
-            Assigned Vehicles
+            Assigned Vehicle
           </label>
-          {/* <span style={{ fontWeight: 500, color: '#495057' }}>
-            {route.vehicles.length} vehicles
-          </span> */}
+          <span style={{ fontWeight: 500, color: '#495057' }}>
+            {route.vehicle.manufacturer} {route.vehicle.model} - {route.vehicle.plateNumber}
+          </span>
         </div>
       </div>
     </div>

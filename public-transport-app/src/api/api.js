@@ -36,12 +36,6 @@ export const apiService = {
   updateRoute: (id, routeData) => api.put(`/routes/${id}`, routeData),
   deleteRoute: (id) => api.delete(`/routes/${id}`),
 
-  // Stop Visits
-  getStopVisits: () => api.get('/stop-visits'),
-  addStopVisit: (stopVisitData) => api.post('/stop-visits', stopVisitData),
-  updateStopVisit: (id, stopVisitData) => api.put(`/stop-visits/${id}`, stopVisitData),
-  deleteStopVisit: (id) => api.delete(`/stop-visits/${id}`),
-
   // Vehicles
   getVehicles: () => api.get('/vehicles'),
   addVehicle: (vehicleData) => api.post('/vehicles', vehicleData),
@@ -50,39 +44,3 @@ export const apiService = {
   updateVehicleStatus: (id, status) => api.patch(`/vehicles/${id}/status`, { status }),
 
 };
-
-
-// Define the districts of Ohrid with their respective details
-const districts = [
-  { name: 'Old Town', area: 2.5, population: 5000, coordinates: { latitude: 41.1125, longitude: 20.8016 } },
-  { name: 'Varosh', area: 3.1, population: 7000, coordinates: { latitude: 41.1130, longitude: 20.7990 } },
-  { name: 'Mesokastro', area: 4.2, population: 8500, coordinates: { latitude: 41.1100, longitude: 20.8025 } },
-  { name: 'Dolno Konjsko', area: 5.0, population: 6000, coordinates: { latitude: 41.0667, longitude: 20.8000 } },
-  { name: 'Lagadin', area: 3.8, population: 4500, coordinates: { latitude: 41.0333, longitude: 20.8000 } },
-];
-
-// Function to populate Ohrid and its districts
-const populateOhrid = async () => {
-  try {
-    // Create the city of Ohrid
-    const cityResponse = await api.post('/cities', {
-      name: 'Ohrid',
-      area: 389.93, // Area in square kilometers
-      country: "North Macedonia",
-      population: 51428,
-      coordinates: { latitude: 41.1172, longitude: 20.8016 },
-    });
-    const cityId = cityResponse.data._id;
-
-    // Add each district to the city
-    for (const district of districts) {
-      await api.post(`/cities/${cityId}/districts`, district);
-    }
-
-    console.log('Ohrid and its districts have been populated successfully.');
-  } catch (error) {
-    console.error('Error populating Ohrid:', error);
-  }
-};
-
-window.populateSkopje = populateOhrid;

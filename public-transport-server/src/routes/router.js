@@ -9,7 +9,6 @@ const CityController = require('../controllers/CityController');
 const DistrictController = require('../controllers/DistrictController');
 const StopController = require('../controllers/StopController');
 const RouteController = require('../controllers/RouteController');
-const StopVisitController = require('../controllers/StopVisitController');
 const VehicleController = require('../controllers/VehicleController');
 
 // City Routes
@@ -98,13 +97,6 @@ router.post('/routes', RouteController.createRoute);
 router.get('/routes/:id', RouteController.getRouteById);
 router.put('/routes/:id', RouteController.updateRoute);
 router.delete('/routes/:id', RouteController.deleteRoute);
-
-// StopVisit Routes
-router.get('/stop-visits', StopVisitController.getAllStopVisits);
-router.post('/stop-visits', StopVisitController.createStopVisit);
-router.get('/stop-visits/:id', StopVisitController.getStopVisitById);
-router.put('/stop-visits/:id', StopVisitController.updateStopVisit);
-router.delete('/stop-visits/:id', StopVisitController.deleteStopVisit);
 
 // Vehicle Routes
 router.get('/vehicles', VehicleController.getAllVehicles);

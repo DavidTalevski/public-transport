@@ -2,13 +2,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const RouteSchema = new Schema({
-  number: {
+  name: {
     type: String,
-    required: true
+    required: true,
   },
-  stopVisits: [{
+  vehicle: {
+      type: Schema.Types.ObjectId,
+      ref: 'Vehicle',
+      required: true
+  },
+  stops: [{
     type: Schema.Types.ObjectId,
-    ref: 'StopVisit'
+    ref: 'Stop'
   }],
 });
 
