@@ -112,5 +112,6 @@ router.post('/vehicles', VehicleController.createVehicle);
 router.get('/vehicles/:id', VehicleController.getVehicleById);
 router.put('/vehicles/:id', VehicleController.updateVehicle);
 router.delete('/vehicles/:id', VehicleController.deleteVehicle);
+router.patch('/vehicles/:id/status', VehicleController.updateVehicleStatus);
 
 module.exports = router;

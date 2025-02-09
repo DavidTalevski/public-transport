@@ -1,59 +1,80 @@
 import React, { useState } from 'react';
+import { apiService } from '../api/api';
 
 // VehicleItem Component
-const VehicleItem = ({ vehicle, onDeleteVehicle }) => {
-  
-    const handleStatusChange = (e) => {
-      // const updatedVehicle = { ...vehicle, status: e.target.value };
-      // onEditVehicle(updatedVehicle);
-    };
-  
-    return (
-      <div className="vehicle-card">
-        <div className="vehicle-header">
-          <h3>{vehicle.manufacturer} {vehicle.model}</h3>
-          <div className="status-selector">
-            <select 
-              value={vehicle.status} 
-              onChange={handleStatusChange}
-              className={`status-${vehicle.status.replace(' ', '-')}`}
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-              <option value="under maintenance">Maintenance</option>
-            </select>
-          </div>
-        </div>
-  
-        <div className="vehicle-details-grid">
-          <div className="detail-item">
-            <label>Plate Number:</label>
-            <span>{vehicle.plateNumber}</span>
-          </div>
-          <div className="detail-item">
-            <label>Type:</label>
-            <span>{vehicle.type}</span>
-          </div>
-          <div className="detail-item">
-            <label>Capacity:</label>
-            <span>{vehicle.capacity} persons</span>
-          </div>
-          <div className="detail-item">
-            <label>Production Year:</label>
-            <span>{vehicle.productionYear}</span>
-          </div>
-        </div>
-  
-        <div className="vehicle-actions">
-          <button
-            className="btn delete-btn"
-            onClick={() => onDeleteVehicle(vehicle._id)}
+const VehicleItem = ({ vehicle, onDeleteVehicle, onEditVehicle }) => {  
+  const [localStatus, setLocalStatus] = useState(vehicle.status);
+
+  const statusStyles = {
+    active: { backgroundColor: '#d4edda', color: '#155724' },
+    inactive: { backgroundColor: '#fff3cd', color: '#856404' },
+    'under maintenance': { backgroundColor: '#f8d7da', color: '#721c24' }
+  };
+
+  const handleStatusChange = async (e) => {
+    const newStatus = e.target.value;
+    try {
+      // Update local state immediately for instant visual feedback
+      setLocalStatus(newStatus);
+      
+      // Send API request
+      await apiService.updateVehicleStatus(vehicle._id, newStatus);
+      
+      // Update parent component state
+      onEditVehicle({ ...vehicle, status: newStatus });
+    } catch (error) {
+      console.error('Error updating status:', error);
+      // Revert to previous status if API call fails
+      setLocalStatus(vehicle.status);
+    }
+  };
+
+  return (
+    <div className="vehicle-card">
+      <div className="vehicle-header">
+        <h3>{vehicle.manufacturer} {vehicle.model}</h3>
+        <div className="status-selector">
+          <select
+            value={localStatus}
+            onChange={handleStatusChange}
+            style={statusStyles[vehicle.status]}
           >
-            Delete Vehicle
-          </button>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="under maintenance">Maintenance</option>
+          </select>
         </div>
-  
-        <style jsx>{`
+      </div>
+
+      <div className="vehicle-details-grid">
+        <div className="detail-item">
+          <label>Plate Number:</label>
+          <span>{vehicle.plateNumber}</span>
+        </div>
+        <div className="detail-item">
+          <label>Number:</label>
+          <span>{vehicle.type}</span>
+        </div>
+        <div className="detail-item">
+          <label>Capacity:</label>
+          <span>{vehicle.capacity} persons</span>
+        </div>
+        <div className="detail-item">
+          <label>Production Year:</label>
+          <span>{vehicle.productionYear}</span>
+        </div>
+      </div>
+
+      <div className="vehicle-actions">
+        <button
+          className="btn delete-btn"
+          onClick={() => onDeleteVehicle(vehicle._id)}
+        >
+          Delete Vehicle
+        </button>
+      </div>
+
+      <style jsx>{`
           .vehicle-card {
             background: white;
             border-radius: 8px;
@@ -166,9 +187,8 @@ const VehicleItem = ({ vehicle, onDeleteVehicle }) => {
             border-radius: 4px;
           }
         `}</style>
-      </div>
-    );
-  };
+    </div>
+  );
+};
 
-  export default VehicleItem;
-  
+export default VehicleItem;

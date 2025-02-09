@@ -374,4 +374,8 @@ body {
   font-size: 12px;
   margin-left: 5px;
 }
+
+.leaflet-container {
+  background: #f8f9fa !important;
+}
   

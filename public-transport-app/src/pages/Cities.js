@@ -10,7 +10,7 @@ const Cities = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
-  const [isDistrictModalOpen, setIsDistrictModalOpen] = useState(false);  // State for district modal
+  const [isDistrictModalOpen, setIsDistrictModalOpen] = useState(false);
   const [districtFormData, setDistrictFormData] = useState({
     name: '',
     population: '',
@@ -29,6 +29,9 @@ const Cities = () => {
   };
 
   const deleteCity = async (id) => {
+    const result = window.confirm("Are you sure you want to delete this city?");
+    if (!result) return;
+
     try {
       await apiService.deleteCity(id);
       setSelectedCity(null);
@@ -71,23 +74,29 @@ const Cities = () => {
         latitude: '',
         longitude: ''
       });
-      setIsDistrictModalOpen(false);  // Close the district modal after adding
+      setIsDistrictModalOpen(false);
       fetchCities();
     } catch (error) {
       console.error('Error adding district:', error);
     }
   };
 
-
   useEffect(() => {
     fetchCities();
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '16px' }}>
+      <div style={{ 
+        display: 'grid',
+        gridTemplateColumns: '1fr',
+        gap: '32px',
+        marginBottom: '32px'
+      }}>
         <div>
-          <h1 className="text-2xl font-bold mb-4">Manage Cities</h1>
+          <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px' }}>
+            Manage Cities
+          </h1>
           <button 
             onClick={() => setIsCityModalOpen(true)} 
             style={{
@@ -111,8 +120,8 @@ const Cities = () => {
             onSelectCity={setSelectedCity}
             onSelectDistrict={setSelectedDistrict}
             onDeleteCity={deleteCity}
-            onAddDistrict={() => setIsDistrictModalOpen(true)}  // Open district modal
-            onDeleteDistrict={deleteDistrict}  // Add delete functionality for district
+            onAddDistrict={() => setIsDistrictModalOpen(true)}
+            onDeleteDistrict={deleteDistrict}
           />
         </div>
       </div>

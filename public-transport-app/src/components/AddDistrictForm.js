@@ -1,4 +1,3 @@
-// AddDistrictForm.jsx
 import React from 'react';
 
 const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
@@ -10,36 +9,52 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
   };
 
   return (
-    <form onSubmit={onSubmit} className="city-form">
-      <h2 className="text-2xl font-semibold mb-6">Add New District</h2>
+    <form onSubmit={onSubmit} style={{ padding: '16px' }}>
+      <h2 style={{ 
+        fontSize: '24px',
+        fontWeight: 600,
+        marginBottom: '24px'
+      }}>
+        Add New District
+      </h2>
 
-      <div className="form-group">
-        <label htmlFor="name">District Name:</label>
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'block', marginBottom: '8px' }}>District Name:</label>
         <input
           name="name"
           value={formData.name}
           onChange={handleChange}
           placeholder="District name"
-          className="p-2 border rounded w-full"
+          style={{
+            padding: '8px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            width: '100%'
+          }}
           required
         />
       </div>
 
-      <div className="form-group">
-        <label htmlFor="population">Population:</label>
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'block', marginBottom: '8px' }}>Population:</label>
         <input
           name="population"
           type="number"
           value={formData.population}
           onChange={handleChange}
           placeholder="Population"
-          className="p-2 border rounded w-full"
+          style={{
+            padding: '8px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            width: '100%'
+          }}
           required
         />
       </div>
 
-      <div className="form-group">
-        <label htmlFor="area">Area (sq km):</label>
+      <div style={{ marginBottom: '16px' }}>
+        <label style={{ display: 'block', marginBottom: '8px' }}>Area (sq km):</label>
         <input
           name="area"
           type="number"
@@ -47,14 +62,24 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
           value={formData.area}
           onChange={handleChange}
           placeholder="Area (km²)"
-          className="p-2 border rounded w-full"
+          style={{
+            padding: '8px',
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            width: '100%'
+          }}
           required
         />
       </div>
 
-      <div className="form-group grid grid-cols-2 gap-3">
+      <div style={{ 
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '12px',
+        marginBottom: '16px'
+      }}>
         <div>
-          <label htmlFor="latitude">Latitude:</label>
+          <label style={{ display: 'block', marginBottom: '8px' }}>Latitude:</label>
           <input
             name="latitude"
             type="number"
@@ -62,12 +87,17 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
             value={formData.latitude}
             onChange={handleChange}
             placeholder="Latitude"
-            className="p-2 border rounded w-full"
+            style={{
+              padding: '8px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              width: '100%'
+            }}
             required
           />
         </div>
         <div>
-          <label htmlFor="longitude">Longitude:</label>
+          <label style={{ display: 'block', marginBottom: '8px' }}>Longitude:</label>
           <input
             name="longitude"
             type="number"
@@ -75,7 +105,12 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
             value={formData.longitude}
             onChange={handleChange}
             placeholder="Longitude"
-            className="p-2 border rounded w-full"
+            style={{
+              padding: '8px',
+              border: '1px solid #ccc',
+              borderRadius: '4px',
+              width: '100%'
+            }}
             required
           />
         </div>
@@ -83,7 +118,16 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
 
       <button
         type="submit"
-        className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 w-full mt-4"
+        style={{
+          backgroundColor: '#2563eb',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '4px',
+          width: '100%',
+          marginTop: '16px',
+          border: 'none',
+          cursor: 'pointer'
+        }}
       >
         Add District
       </button>
