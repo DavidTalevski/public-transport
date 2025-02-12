@@ -1,11 +1,9 @@
 import React from 'react';
-import CityItem from './CityItem';
+import CityItem from '../item/CityItem';
 
 const CityList = ({ cities, selectedCity, selectedDistrict, onSelectCity, onSelectDistrict, onAddDistrict, onDeleteDistrict, onDeleteCity }) => {
   return (
-    <div className="list-container">
-      <h2>Cities List</h2>
-      <ul className="cities-list">
+    <div >
         {cities.map(city => (
           <CityItem
             key={city._id}
@@ -19,7 +17,6 @@ const CityList = ({ cities, selectedCity, selectedDistrict, onSelectCity, onSele
             onDelete={onDeleteCity}
           />
         ))}
-      </ul>
     </div>
   );
 };

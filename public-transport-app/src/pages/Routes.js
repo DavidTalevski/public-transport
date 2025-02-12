@@ -1,9 +1,9 @@
 // Routes.jsx (Main Component)
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../api/api';
-import RouteList from '../components/RouteList';
+import RouteList from '../components/list/RouteList';
 import Modal from '../components/Modal';
-import RouteForm from '../components/RouteForm';
+import RouteForm from '../components/form/RouteForm';
 
 const Routes = () => {
   const [routes, setRoutes] = useState([]);

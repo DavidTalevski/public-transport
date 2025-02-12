@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
+const DistrictForm = ({ formData, setFormData, onSubmit }) => {
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
@@ -135,4 +135,4 @@ const AddDistrictForm = ({ formData, setFormData, onSubmit }) => {
   );
 };
 
-export default AddDistrictForm;
+export default DistrictForm;

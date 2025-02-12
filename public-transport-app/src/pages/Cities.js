@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../api/api';
-import CityForm from '../components/CityForm';
-import CityList from '../components/CityList';
-import AddDistrictForm from '../components/AddDistrictForm';
+import CityForm from '../components/form/CityForm';
+import CityList from '../components/list/CityList';
+import DistrictForm from '../components/form/DistrictForm';
 import Modal from '../components/Modal';
 
 const Cities = () => {
@@ -134,7 +134,7 @@ const Cities = () => {
 
       {isDistrictModalOpen && (
         <Modal onClose={() => setIsDistrictModalOpen(false)}>
-          <AddDistrictForm
+          <DistrictForm
             formData={districtFormData}
             setFormData={setDistrictFormData}
             onSubmit={handleAddDistrict}

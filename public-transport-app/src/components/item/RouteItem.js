@@ -16,19 +16,6 @@ const RouteItem = ({ route, onDelete, onSelect }) => {
           <button
             style={{
               padding: '8px 16px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-            onClick={() => onSelect(route)}
-          >
-            Edit
-          </button>
-          <button
-            style={{
-              padding: '8px 16px',
               backgroundColor: '#dc3545',
               color: 'white',
               border: 'none',

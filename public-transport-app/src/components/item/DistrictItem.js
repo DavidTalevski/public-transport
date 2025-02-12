@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
-import StopList from './StopList';
-import { apiService } from '../api/api';
+import StopList from '../list/StopList';
+import { apiService } from '../../api/api';
 
 const DistrictItem = ({ district, isSelected, onSelect, onDeleteDistrict, onUpdateStops }) => {
   const [districtStops, setDistrictStops] = useState(district.stops);
-
-  console.log("District");
-  console.log(district);
 
   // Function to handle stop deletion
   const handleDeleteStop = async (stopId) => {
     try {
       // Delete stop using API service
       await apiService.deleteStop(stopId);
-      
+
       // Remove stop from the local state
       const updatedStops = districtStops.filter(stop => stop._id !== stopId);
       setDistrictStops(updatedStops);
@@ -51,16 +48,23 @@ const DistrictItem = ({ district, isSelected, onSelect, onDeleteDistrict, onUpda
           <p>Population: {district.population.toLocaleString()} | Area: {district.area} km²</p>
         </div>
         <div className="button-group">
-          <button onClick={() => onSelect(isSelected ? null : district)} className="toggle-button">
+          <button
+            onClick={() => onSelect(isSelected ? null : district)}
+            className="toggle-button"
+            style={{ minWidth: '120px' }}
+          >
             {isSelected ? 'Collapse' : 'Manage'}
           </button>
+
           <button
             onClick={() => onDeleteDistrict(district._id)}
             className="delete-button"
+            style={{ minWidth: '120px' }}
           >
             Delete District
           </button>
         </div>
+
       </div>
 
       {isSelected && (

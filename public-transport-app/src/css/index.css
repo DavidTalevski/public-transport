@@ -54,9 +54,8 @@ body {
   .cities-container {
     max-width: 800px;
     margin: 40px auto;
-    padding: 20px;
     background: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border-radius: 8px;
   }
   
@@ -162,7 +161,6 @@ body {
   .list-container {
     flex: 2;
     background-color: #fff;
-    margin: 20px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -191,7 +189,9 @@ body {
     background-color: #e74c3c;
     color: #fff;
     border: none;
-    padding: 5px 10px;
+    margin: 10px;
+    padding: 6px 12px;
+    font-size: 14px;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -269,11 +269,17 @@ body {
     background-color: #f1c40f;
     color: #fff;
     border: none;
-    padding: 5px 10px;
+    font-size: 14px;
+    padding: 6px 12px;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 10px;
+    margin: 10px;
+    transition: background-color 0.3s ease;
   }
+
+.select-button:hover {
+  background-color: #cfa910;
+}
   
   .select-button.selected {
     background-color: #f39c12;
@@ -282,7 +288,7 @@ body {
   /* District List */
 .district-list-container {
   margin-top: 10px;
-  min-width: 450px;
+  min-width: 570px;
   padding: 10px;
   background: #fff;
   border-radius: 6px;
@@ -330,6 +336,7 @@ body {
   cursor: pointer;
   padding: 6px 12px;
   border: none;
+  margin-top: 10px;
   border-radius: 4px;
   font-size: 14px;
   background-color: #3498db;

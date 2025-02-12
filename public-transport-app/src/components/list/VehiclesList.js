@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import VehicleItem from './VehicleItem';
+import VehicleItem from '../item/VehicleItem';
 
 // VehiclesList Component
 const VehiclesList = ({

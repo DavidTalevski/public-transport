@@ -1,5 +1,5 @@
 import React from 'react';
-import DistrictItem from './DistrictItem';
+import DistrictItem from '../item/DistrictItem';
 
 const DistrictList = ({ districts, selectedDistrict, onSelectDistrict, onDeleteDistrict }) => {
   return (

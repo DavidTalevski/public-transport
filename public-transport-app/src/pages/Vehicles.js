@@ -1,7 +1,9 @@
+// Vehicles.jsx
 import React, { useEffect, useState } from 'react';
 import { apiService } from '../api/api';
-import VehiclesList from '../components/VehiclesList';
+import VehiclesList from '../components/list/VehiclesList';
 import Modal from '../components/Modal';
+import VehicleForm from '../components/form/VehicleForm';
 
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState([]);
@@ -100,153 +102,13 @@ const Vehicles = () => {
 
       {isVehicleModalOpen && (
         <Modal onClose={() => setIsVehicleModalOpen(false)}>
-          <form onSubmit={handleAddVehicle} style={{ padding: '16px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Number
-                </label>
-                <input
-                  type="text"
-                  value={newVehicleFormData.type}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, type: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Plate Number
-                </label>
-                <input
-                  type="text"
-                  value={newVehicleFormData.plateNumber}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, plateNumber: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Capacity
-                </label>
-                <input
-                  type="number"
-                  value={newVehicleFormData.capacity}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, capacity: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Manufacturer
-                </label>
-                <input
-                  type="text"
-                  value={newVehicleFormData.manufacturer}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, manufacturer: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Model
-                </label>
-                <input
-                  type="text"
-                  value={newVehicleFormData.model}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, model: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Production Year
-                </label>
-                <input
-                  type="number"
-                  value={newVehicleFormData.productionYear}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, productionYear: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                />
-              </div>
-
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
-                  Status
-                </label>
-                <select
-                  value={newVehicleFormData.status}
-                  onChange={(e) => setNewVehicleFormData({ ...newVehicleFormData, status: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: '8px',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px'
-                  }}
-                  required
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                  <option value="under maintenance">Under Maintenance</option>
-                </select>
-              </div>
-
-              <button
-                type="submit"
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: 'pointer',
-                  width: '100%'
-                }}
-              >
-                Add Vehicle
-              </button>
-            </div>
-          </form>
+          <VehicleForm
+            onClose={() => setIsVehicleModalOpen(false)}
+            onSubmit={handleAddVehicle}
+            formData={newVehicleFormData}
+            setFormData={setNewVehicleFormData}
+            title="Add New Vehicle"
+          />
         </Modal>
       )}
     </div>
