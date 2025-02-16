@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # Config Server Replica Set (3 nodes)
+  cfg1:
+    image: mongo:8.0
+    command: mongod --configsvr --replSet cfgrs --port 27017 --bind_ip_all
+    volumes:
+      - cfg1_data:/data/db
+    networks:
+      - mongodb-net
+
+  cfg2:
+    image: mongo:8.0
+    command: mongod --configsvr --replSet cfgrs --port 27017 --bind_ip_all
+    volumes:
+      - cfg2_data:/data/db
+    networks:
+      - mongodb-net
+
+  cfg3:
+    image: mongo:8.0
+    command: mongod --configsvr --replSet cfgrs --port 27017 --bind_ip_all
+    volumes:
+      - cfg3_data:/data/db
+    networks:
+      - mongodb-net
+
+  # Shard 1 Replica Set (3 nodes)
+  shard1a:
+    image: mongo:8.0
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1a_data:/data/db
+    networks:
+      - mongodb-net
+
+  shard1b:
+    image: mongo:8.0
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1b_data:/data/db
+    networks:
+      - mongodb-net
+
+  shard1c:
+    image: mongo:8.0
+    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
+    volumes:
+      - shard1c_data:/data/db
+    networks:
+      - mongodb-net
+
+  # Mongos Router
+  mongos:
+    image: mongo:8.0
+    command: mongos --configdb cfgrs/cfg1:27017,cfg2:27017,cfg3:27017 --bind_ip_all
+    ports:
+      - "27017:27017"
+    depends_on:
+      - cfg1
+      - cfg2
+      - cfg3
+    networks:
+      - mongodb-net
+
+volumes:
+  cfg1_data:
+  cfg2_data:
+  cfg3_data:
+  shard1a_data:
+  shard1b_data:
+  shard1c_data:
+
+networks:
+  mongodb-net:
+    driver: bridge

@@ -1,46 +1,52 @@
 import axios from 'axios';
 
-// Create an Axios instance with default settings
 const api = axios.create({
-  baseURL:'http://localhost:5000/api', // Use environment variable or fallback to default
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000/api',
 });
 
-// Centralized API methods
 export const apiService = {
   // Cities
   getCities: () => api.get('/cities'),
-  addCity: (cityData) => api.post('/cities', cityData),
-  updateCity: (id, cityData) => api.put(`/cities/${id}`, cityData),
+  getCityDetails: (id) => api.get(`/cities/${id}`),
+  createCity: (data) => api.post('/cities', data),
+  updateCity: (id, data) => api.put(`/cities/${id}`, data),
   deleteCity: (id) => api.delete(`/cities/${id}`),
 
+  // City Relationships
+  getCityDistricts: (cityId) => api.get(`/cities/${cityId}/districts`),
+  getCityStops: (cityId) => api.get(`/cities/${cityId}/stops`),
+  getCityRoutes: (cityId) => api.get(`/cities/${cityId}/routes`),
+  getCityVehicles: (cityId) => api.get(`/cities/${cityId}/vehicles`),
+
   // Districts
-  getDistricts: () => api.get('/districts'),
-  addDistrict: (districtData) => api.post('/districts', districtData),
-  updateDistrict: (id, districtData) => api.put(`/districts/${id}`, districtData),
+  createDistrict: (cityId, data) => api.post(`/cities/${cityId}/districts`, data),
+  getDistrict: (id) => api.get(`/districts/${id}`),
+  getAllDistricts: (id) => api.get(`/districts/`),
+  updateDistrict: (id, data) => api.put(`/districts/${id}`, data),
   deleteDistrict: (id) => api.delete(`/districts/${id}`),
 
-  // Add District to a City
-  addDistrictToCity: (cityId, districtData) => api.post(`/cities/${cityId}/districts`, districtData),
-
-  // Stops
-  getStops: () => api.get('/stops'),
-  addStop: (stopData) => api.post('/stops', stopData),
-  updateStop: (id, stopData) => api.put(`/stops/${id}`, stopData),
-  deleteStop: (id) => api.delete(`/stops/${id}`),
-
-  addStopToDistrict: (districtId, stopData) => api.post(`/districts/${districtId}/stops`, stopData),
+  // District-Stops
+  addStopToDistrict: (districtId, data) => api.post(`/districts/${districtId}/stops`, data),
+  getDistrictStops: (districtId) => api.get(`/districts/${districtId}/stops`),
 
   // Routes
-  getRoutes: () => api.get('/routes'),
-  addRoute: (routeData) => api.post('/routes', routeData),
-  updateRoute: (id, routeData) => api.put(`/routes/${id}`, routeData),
+  createRoute: (cityId, data) => api.post(`/cities/${cityId}/routes`, data),
+  getAllRoutes: (id) => api.get(`/routes/`),
+  getRoute: (id) => api.get(`/routes/${id}`),
+  updateRoute: (id, data) => api.put(`/routes/${id}`, data),
   deleteRoute: (id) => api.delete(`/routes/${id}`),
 
   // Vehicles
-  getVehicles: () => api.get('/vehicles'),
-  addVehicle: (vehicleData) => api.post('/vehicles', vehicleData),
-  updateVehicle: (id, vehicleData) => api.put(`/vehicles/${id}`, vehicleData),
-  deleteVehicle: (id) => api.delete(`/vehicles/${id}`),
+  createVehicle: (cityId, data) => api.post(`/cities/${cityId}/vehicles`, data),
+  getVehicle: (id) => api.get(`/vehicles/${id}`),
+  getAllVehicles: () => api.get('/vehicles'), // Add this
+  getCityVehicles: (cityId) => api.get(`/cities/${cityId}/vehicles`), // Fix typo in path
+  updateVehicle: (id, data) => api.put(`/vehicles/${id}`, data),
   updateVehicleStatus: (id, status) => api.patch(`/vehicles/${id}/status`, { status }),
+  deleteVehicle: (id) => api.delete(`/vehicles/${id}`),
 
+  // Stops
+  getStop: (id) => api.get(`/stops/${id}`),
+  updateStop: (id, data) => api.put(`/stops/${id}`, data),
+  deleteStop: (id) => api.delete(`/stops/${id}`)
 };

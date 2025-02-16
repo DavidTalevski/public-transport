@@ -17,7 +17,7 @@ const Routes = () => {
 
   const fetchRoutes = async () => {
     try {
-      const response = await apiService.getRoutes();
+      const response = await apiService.getAllRoutes();
       setRoutes(response.data);
     } catch (error) {
       console.error('Error fetching routes:', error);
@@ -36,7 +36,7 @@ const Routes = () => {
   const handleAddRoute = async (e) => {
     e.preventDefault();
     try {
-      await apiService.addRoute(newRouteFormData);
+      await apiService.createRoute(newRouteFormData.city, newRouteFormData);
       fetchRoutes();
       setIsRouteModalOpen(false);
       setNewRouteFormData({ name: '', stops: [], vehicles: [] });

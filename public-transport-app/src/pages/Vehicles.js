@@ -7,7 +7,9 @@ import VehicleForm from '../components/form/VehicleForm';
 
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState([]);
+  const [cities, setCities] = useState([]); // Add cities state
   const [newVehicleFormData, setNewVehicleFormData] = useState({
+    city_id: '', // Add city_id to form data
     type: '',
     plateNumber: '',
     capacity: '',
@@ -18,19 +20,27 @@ const Vehicles = () => {
   });
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
 
-  const fetchVehicles = async () => {
+  // Fetch both vehicles and cities
+  const fetchData = async () => {
     try {
-      const response = await apiService.getVehicles();
-      setVehicles(response.data);
+      const [vehiclesRes, citiesRes] = await Promise.all([
+        apiService.getAllVehicles(),
+        apiService.getCities()
+      ]);
+      setVehicles(vehiclesRes.data);
+      setCities(citiesRes.data);
     } catch (error) {
-      console.error('Error fetching vehicles:', error);
+      console.error('Error fetching data:', error);
     }
   };
 
   const deleteVehicle = async (id) => {
     try {
       await apiService.deleteVehicle(id);
-      fetchVehicles();
+      // Update state
+      const updatedVehicles = vehicles.filter(v => v._id !== id);
+      setVehicles(updatedVehicles);
+
     } catch (error) {
       console.error('Error deleting vehicle:', error);
     }
@@ -39,9 +49,13 @@ const Vehicles = () => {
   const handleAddVehicle = async (e) => {
     e.preventDefault();
     try {
-      const newVehicle = await apiService.addVehicle(newVehicleFormData);
-      setVehicles([...vehicles, newVehicle.data]);
+      // Destructure city_id from form data
+      const { city_id, ...vehicleData } = newVehicleFormData;
+      const response = await apiService.createVehicle(city_id, vehicleData);
+      
+      setVehicles([...vehicles, response.data]);
       setNewVehicleFormData({
+        city_id: '',
         type: '',
         plateNumber: '',
         capacity: '',
@@ -57,7 +71,7 @@ const Vehicles = () => {
   };
 
   useEffect(() => {
-    fetchVehicles();
+    fetchData();
   }, []);
 
   return (
@@ -90,6 +104,7 @@ const Vehicles = () => {
         <div>
           <VehiclesList
             vehicles={vehicles}
+            cities={cities}
             onDeleteVehicle={deleteVehicle}
             onEditVehicle={(updatedVehicle) => {
               setVehicles(prev => prev.map(v =>
@@ -103,6 +118,7 @@ const Vehicles = () => {
       {isVehicleModalOpen && (
         <Modal onClose={() => setIsVehicleModalOpen(false)}>
           <VehicleForm
+            cities={cities}
             onClose={() => setIsVehicleModalOpen(false)}
             onSubmit={handleAddVehicle}
             formData={newVehicleFormData}

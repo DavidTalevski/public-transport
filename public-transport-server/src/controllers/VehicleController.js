@@ -74,3 +74,26 @@ exports.updateVehicleStatus = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+exports.createVehicleForCity = async (req, res) => {
+  try {
+    const vehicleData = {
+      ...req.body,
+      city_id: req.params.cityId
+    };
+    const vehicle = new Vehicle(vehicleData);
+    await vehicle.save();
+    res.status(201).json(vehicle);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.getVehiclesByCity = async (req, res) => {
+  try {
+    const vehicles = await Vehicle.find({ city_id: req.params.cityId });
+    res.status(200).json(vehicles);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

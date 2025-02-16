@@ -53,3 +53,17 @@ exports.deleteRoute = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.createRouteForCity = async (req, res) => {
+  try {
+    const routeData = {
+      ...req.body,
+      city_id: req.params.cityId
+    };
+    const route = new Route(routeData);
+    await route.save();
+    res.status(201).json(route);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};

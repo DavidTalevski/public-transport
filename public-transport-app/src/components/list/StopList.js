@@ -7,6 +7,9 @@ const StopList = ({ stops, onDeleteStop, onAddStop }) => {
   const [newStopLatitude, setNewStopLatitude] = useState('');
   const [newStopLongitude, setNewStopLongitude] = useState('');
 
+
+  console.log(stops)
+
   const handleAddStop = (e) => {
     e.preventDefault();
     const newStop = {

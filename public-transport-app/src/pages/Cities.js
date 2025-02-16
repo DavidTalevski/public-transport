@@ -7,6 +7,7 @@ import Modal from '../components/Modal';
 
 const Cities = () => {
   const [cities, setCities] = useState([]);
+  const [districtsByCityId, setDistrictsByCityId] = useState({});
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [isCityModalOpen, setIsCityModalOpen] = useState(false);
@@ -28,6 +29,26 @@ const Cities = () => {
     }
   };
 
+  const fetchDistricts = async (cityId) => {
+    try {
+      const response = await apiService.getCityDistricts(cityId);
+      setDistrictsByCityId(prev => ({
+        ...prev,
+        [cityId]: response.data
+      }));
+    } catch (error) {
+      console.error('Error fetching districts:', error);
+    }
+  };
+
+  const handleSelectCity = async (city) => {
+    if (city && !districtsByCityId[city._id]) {
+      await fetchDistricts(city._id);
+    }
+    setSelectedCity(city);
+  };
+  
+
   const deleteCity = async (id) => {
     const result = window.confirm("Are you sure you want to delete this city?");
     if (!result) return;
@@ -47,7 +68,7 @@ const Cities = () => {
 
     try {
       await apiService.deleteDistrict(districtId);
-      fetchCities();
+      await fetchDistricts(selectedCity._id);
     } catch (error) {
       console.error('Error deleting district:', error);
     }
@@ -58,7 +79,7 @@ const Cities = () => {
     if (!selectedCity) return;
 
     try {
-      await apiService.addDistrictToCity(selectedCity._id, {
+      const response = await apiService.createDistrict(selectedCity._id, {
         ...districtFormData,
         population: parseInt(districtFormData.population, 10),
         area: parseFloat(districtFormData.area),
@@ -67,6 +88,12 @@ const Cities = () => {
           longitude: parseFloat(districtFormData.longitude),
         }
       });
+      
+      setDistrictsByCityId(prev => ({
+        ...prev,
+        [selectedCity._id]: [...(prev[selectedCity._id] || []), response.data]
+      }));
+
       setDistrictFormData({
         name: '',
         population: '',
@@ -75,7 +102,6 @@ const Cities = () => {
         longitude: ''
       });
       setIsDistrictModalOpen(false);
-      fetchCities();
     } catch (error) {
       console.error('Error adding district:', error);
     }
@@ -115,9 +141,10 @@ const Cities = () => {
         <div>
           <CityList
             cities={cities}
+            districtsByCityId={districtsByCityId}
             selectedCity={selectedCity}
             selectedDistrict={selectedDistrict}
-            onSelectCity={setSelectedCity}
+            onSelectCity={handleSelectCity}
             onSelectDistrict={setSelectedDistrict}
             onDeleteCity={deleteCity}
             onAddDistrict={() => setIsDistrictModalOpen(true)}

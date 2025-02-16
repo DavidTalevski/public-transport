@@ -53,3 +53,36 @@ exports.deleteDistrict = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.createDistrictForCity = async (req, res) => {
+  try {
+    const districtData = {
+      ...req.body,
+      city_id: req.params.cityId
+    };
+    const district = new District(districtData);
+    await district.save();
+    res.status(201).json(district);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+exports.addStopToDistrict = async (req, res) => {
+  try {
+    const district = await District.findById(req.params.districtId);
+    if (!district) return res.status(404).json({ message: 'District not found' });
+
+    const stop = new Stop({
+      ...req.body,
+      city_id: district.city_id
+    });
+    
+    await stop.save();
+    district.stops.push(stop._id);
+    await district.save();
+    res.status(201).json(stop);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

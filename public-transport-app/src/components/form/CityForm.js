@@ -30,7 +30,7 @@ const CityForm = ({ fetchCities, onClose }) => {
         population: parseInt(population, 10),
         area: parseFloat(area),
       };
-      await apiService.addCity(cityData);
+      await apiService.createCity(cityData);
       fetchCities();
       setFormData({
         name: '',

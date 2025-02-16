@@ -2,10 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { apiService } from '../api/api';
 import StatCard from '../components/cards/StatCard';
 import Map from '../components/map/Map';
+import CitySelector from '../components/CitySelector'; // New component
+import AchievementBadge from '../components/AchievementBadge';
 
 const Home = () => {
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [cities, setCities] = useState([]);
   const [stats, setStats] = useState({
-    cities: 0,
     districts: 0,
     stops: [],
     routes: [],
@@ -13,15 +16,38 @@ const Home = () => {
     dailyPassengers: 0
   });
 
+  // Fetch list of cities
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCities = async () => {
       try {
-        const [citiesRes, districtsRes, stopsRes, routesRes, vehiclesRes] = await Promise.all([
-          apiService.getCities(),
-          apiService.getDistricts(),
-          apiService.getStops(),
-          apiService.getRoutes(),
-          apiService.getVehicles()
+        const response = await apiService.getCities();
+        setCities(response.data);
+        if (response.data.length > 0) {
+          setSelectedCity(response.data[0]._id);
+        }
+      } catch (error) {
+        console.error('Error fetching cities:', error);
+      }
+    };
+    fetchCities();
+  }, []);
+
+  // Fetch city-specific data
+  useEffect(() => {
+    const fetchCityData = async () => {
+      if (!selectedCity) return;
+
+      try {
+        const [
+          districtsRes,
+          stopsRes,
+          routesRes,
+          vehiclesRes
+        ] = await Promise.all([
+          apiService.getCityDistricts(selectedCity),
+          apiService.getCityStops(selectedCity),
+          apiService.getCityRoutes(selectedCity),
+          apiService.getCityVehicles(selectedCity)
         ]);
 
         const vehicles = vehiclesRes.data.reduce((acc, vehicle) => {
@@ -30,79 +56,51 @@ const Home = () => {
         }, { active: 0, inactive: 0, maintenance: 0 });
 
         setStats({
-          cities: citiesRes.data.length,
           districts: districtsRes.data.length,
           stops: stopsRes.data,
           routes: routesRes.data,
           vehicles,
-          dailyPassengers: 16000
+          dailyPassengers: 16000 // This should come from backend
         });
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching city data:', error);
       }
     };
 
-    fetchData();
-    const interval = setInterval(fetchData, 300000); // Refresh every 5 minutes
+    fetchCityData();
+    const interval = setInterval(fetchCityData, 300000);
     return () => clearInterval(interval);
-  }, []);
+  }, [selectedCity]);
 
   // Calculated metrics
-  const totalRouteDistance = stats.routes.reduce((acc, route) => acc + (route.distance || 0), 0);
+  const totalRouteDistance = stats.routes.reduce((acc, route) => 
+    acc + (route.distance || 0), 0);
   const averageSpeed = stats.routes.length > 0 ? 
     stats.routes.reduce((acc, route) => acc + (route.averageSpeed || 0), 0) / stats.routes.length : 0;
   const coveragePercentage = (stats.districts / 84) * 100;
   const co2Savings = stats.dailyPassengers * 0.15 * 30;
 
-  // Style constants
-  const cardStyle = {
-    background: 'white',
-    borderRadius: '12px',
-    padding: '20px',
-    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-  };
-
-  const cardTitleStyle = { 
-    margin: '0 0 15px', 
-    color: '#666',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px'
-  };
-
-  const AchievementBadge = ({ icon, title, description, unlocked }) => (
-    <div style={{
-      minWidth: '160px',
-      padding: '15px',
-      background: unlocked ? '#f8f9fa' : '#e9ecef',
-      borderRadius: '8px',
-      textAlign: 'center',
-      opacity: unlocked ? 1 : 0.5,
-      filter: unlocked ? 'none' : 'grayscale(100%)'
-    }}>
-      <div style={{ fontSize: '24px', marginBottom: '8px' }}>{icon}</div>
-      <div style={{ fontWeight: '600', marginBottom: '4px' }}>{title}</div>
-      <div style={{ fontSize: '12px', color: '#7f8c8d' }}>{description}</div>
-    </div>
-  );
-
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <h1 style={{ textAlign: 'center', color: '#2c3e50', marginBottom: '30px' }}>
-        🚌 Public Transport Management Dashboard
-      </h1>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <h1 style={{ color: '#2c3e50', marginBottom: '30px' }}>
+          🚌 Public Transport Management
+        </h1>
+        <CitySelector 
+          cities={cities}
+          selectedCity={selectedCity}
+          onSelectCity={setSelectedCity}
+        />
+      </div>
 
       {/* Map Section */}
       <div style={cardStyle}>
-        <h3 style={{ ...cardTitleStyle, justifyContent: 'center' }}>Transport Network Map</h3>
+        <h3 style={{ ...cardTitleStyle, justifyContent: 'center' }}>
+          {selectedCity ? cities.find(c => c._id === selectedCity)?.name : ''} Transport Network
+        </h3>
         <Map stops={stats.stops} routes={stats.routes} />
-        <div style={{ 
-          marginTop: '10px',
-          color: '#7f8c8d',
-          fontSize: '0.9em',
-          textAlign: 'center'
-        }}>
-          🎯 {stats.stops.length} stops mapped across North Macedonia
+        <div style={mapFooterStyle}>
+          🎯 {stats.stops.length} stops mapped across selected city
         </div>
       </div>
 
@@ -284,5 +282,28 @@ const Home = () => {
     </div>
   );
 };
+
+const cardStyle = {
+  background: 'white',
+  borderRadius: '12px',
+  padding: '20px',
+  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+};
+
+const cardTitleStyle = { 
+  margin: '0 0 15px', 
+  color: '#666',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px'
+};
+
+const mapFooterStyle = {
+  marginTop: '10px',
+  color: '#7f8c8d',
+  fontSize: '0.9em',
+  textAlign: 'center'
+};
+
 
 export default Home;

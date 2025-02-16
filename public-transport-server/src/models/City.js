@@ -27,11 +27,7 @@ const CitySchema = new Schema({
   area: {
     type: Number,
     required: true
-  },
-  districts: [{
-    type: Schema.Types.ObjectId,
-    ref: 'District'
-  }],
-});
+  }
+}, { shardKey: { _id: 1 } });
 
 module.exports = mongoose.model('City', CitySchema);

@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { apiService } from '../../api/api';
 
 // VehicleItem Component
-const VehicleItem = ({ vehicle, onDeleteVehicle, onEditVehicle }) => {  
+const VehicleItem = ({ vehicle, cities, onDeleteVehicle, onEditVehicle }) => {  
   const [localStatus, setLocalStatus] = useState(vehicle.status);
 
+  const city = cities.find(c => c._id === vehicle.city_id);
   const statusStyles = {
     active: { backgroundColor: '#d4edda', color: '#155724' },
     inactive: { backgroundColor: '#fff3cd', color: '#856404' },
@@ -58,6 +59,10 @@ const VehicleItem = ({ vehicle, onDeleteVehicle, onEditVehicle }) => {
         <div className="detail-item">
           <label>Capacity:</label>
           <span>{vehicle.capacity} persons</span>
+        </div>
+        <div className="detail-item">
+          <label>City:</label>
+          <span>{city ? city.name : 'Unknown City'}</span>
         </div>
         <div className="detail-item">
           <label>Production Year:</label>
@@ -122,7 +127,7 @@ const VehicleItem = ({ vehicle, onDeleteVehicle, onEditVehicle }) => {
   
           .vehicle-details-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 15px;
           }

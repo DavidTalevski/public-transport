@@ -4,10 +4,12 @@ import VehicleItem from '../item/VehicleItem';
 // VehiclesList Component
 const VehiclesList = ({
   vehicles,
+  cities,
   onDeleteVehicle,
   onEditVehicle,
   onAddVehicle
 }) => {
+
   const [isAdding, setIsAdding] = useState(false);
   const [newVehicle, setNewVehicle] = useState({
     manufacturer: '',
@@ -77,6 +79,7 @@ const VehiclesList = ({
         {vehicles.map((vehicle) => (
           <VehicleItem
             key={vehicle._id}
+            cities={cities}
             vehicle={vehicle}
             onDeleteVehicle={onDeleteVehicle}
             onEditVehicle={onEditVehicle}

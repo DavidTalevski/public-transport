@@ -1,26 +1,43 @@
 // VehicleForm.jsx
 import React from 'react';
 
-const VehicleForm = ({ 
-    onClose, 
-    onSubmit, 
-    formData, 
-    setFormData, 
-    title = "Add Vehicle" 
-  }) => {
-    return (
-      <form onSubmit={onSubmit} style={{ padding: '16px', width: '500px' }}>
-        <h2 style={{ 
-          fontSize: '20px', 
-          fontWeight: '600', 
-          marginBottom: '24px',
-          color: '#2c3e50',
-          textAlign: 'center'
-        }}>
-          {title}
-        </h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
+const VehicleForm = ({
+  onClose,
+  onSubmit,
+  formData,
+  setFormData,
+  cities,
+  title = "Add Vehicle"
+}) => {
+  return (
+    <form onSubmit={onSubmit} style={{ padding: '16px', width: '500px' }}>
+      <h2 style={{
+        fontSize: '20px',
+        fontWeight: '600',
+        marginBottom: '24px',
+        color: '#2c3e50',
+        textAlign: 'center'
+      }}>
+        {title}
+      </h2>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px', marginBottom: '24px' }}>
+        {/* Add City Selector */}
+        <div style={{ gridColumn: 'span 2' }}>
+          <label style={labelStyle}>City</label>
+          <select
+            value={formData.city_id}
+            onChange={(e) => setFormData({ ...formData, city_id: e.target.value })}
+            style={{ ...inputStyle, padding: '9px' }}
+            required
+          >
+            <option value="">Select a City</option>
+            {cities.map(city => (
+              <option key={city._id} value={city._id}>{city.name}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Type */}
         <div style={{ gridColumn: 'span 2' }}>
           <label style={labelStyle}>Vehicle Type</label>
@@ -107,8 +124,8 @@ const VehicleForm = ({
             <option value="under maintenance">Under Maintenance</option>
           </select>
         </div>
-        </div>
-         {/* Full-width button container */}
+      </div>
+      {/* Full-width button container */}
       <div style={{ gridColumn: 'span 2', width: '100%' }}>
         <button
           type="submit"
@@ -128,8 +145,8 @@ const VehicleForm = ({
 
 // Style constants
 const labelStyle = {
-  display: 'block', 
-  marginBottom: '8px', 
+  display: 'block',
+  marginBottom: '8px',
   fontWeight: '500',
   color: '#495057'
 };
@@ -145,16 +162,16 @@ const inputStyle = {
 
 // Updated submit button style
 const submitButtonStyle = {
-    backgroundColor: '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-    ':hover': {
-      backgroundColor: '#218838'
-    }
-  };
+  backgroundColor: '#28a745',
+  color: 'white',
+  border: 'none',
+  borderRadius: '4px',
+  cursor: 'pointer',
+  transition: 'background-color 0.2s',
+  ':hover': {
+    backgroundColor: '#218838'
+  }
+};
 
 
 

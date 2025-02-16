@@ -16,12 +16,14 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [citiesRes, vehiclesRes] = await Promise.all([
+        const [citiesRes, districtsRes, vehiclesRes] = await Promise.all([
           apiService.getCities(),
-          apiService.getVehicles()
+          apiService.getAllDistricts(),
+          apiService.getAllVehicles()
         ]);
-        
+
         setCities(citiesRes.data);
+        setDistricts(districtsRes.data)
         setVehicles(vehiclesRes.data.filter(v => v.status === 'active'));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -31,14 +33,14 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
   }, []);
 
   // Update districts when city changes
-  useEffect(() => {
-    if (currentSelection.city) {
-      const selectedCity = cities.find(c => c._id === currentSelection.city);
-      setDistricts(selectedCity?.districts || []);
-    } else {
-      setDistricts([]);
-    }
-  }, [currentSelection.city, cities]);
+  // useEffect(() => {
+  //   if (currentSelection.city) {
+  //     const selectedCity = cities.find(c => c._id === currentSelection.city);
+  //     setDistricts(selectedCity?.districts || []);
+  //   } else {
+  //     setDistricts([]);
+  //   }
+  // }, [currentSelection.city, cities]);
 
   // Update stops when district changes
   useEffect(() => {
@@ -65,7 +67,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
     const temp = newStops[index];
     newStops[index] = newStops[index + direction];
     newStops[index + direction] = temp;
-    
+
     setFormData(prev => ({
       ...prev,
       stops: newStops
@@ -74,7 +76,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
 
   const getStopLocationInfo = (stopId) => {
     for (const city of cities) {
-      for (const district of city.districts) {
+      for (const district of districts) {
         const stop = district.stops?.find(s => s._id === stopId);
         if (stop) {
           return {
@@ -89,9 +91,9 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
   };
 
   return (
-    <form 
-      onSubmit={onSubmit} 
-      style={{ 
+    <form
+      onSubmit={onSubmit}
+      style={{
         padding: '20px',
         borderRadius: '8px',
         display: 'grid',
@@ -103,10 +105,10 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
         overflow: 'hidden'
       }}
     >
-      <h2 style={{ 
+      <h2 style={{
         gridColumn: '1 / -1',
-        fontSize: '24px', 
-        fontWeight: 600, 
+        fontSize: '24px',
+        fontWeight: 600,
         margin: '0 0 20px',
         color: '#2c3e50',
         textAlign: 'center'
@@ -115,7 +117,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
       </h2>
 
       {/* Left Column - Form Inputs */}
-      <div style={{ 
+      <div style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '24px',
@@ -154,25 +156,36 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
         </div>
 
         {/* Stop Selection Panel */}
-        <div style={{ 
+        <div style={{
           border: '1px solid #e2e8f0',
           borderRadius: '8px',
           padding: '16px',
           backgroundColor: '#f8fafc'
         }}>
           <h3 style={sectionTitleStyle}>Add Stops</h3>
-          
+
           {/* City Selection */}
           <div style={{ marginBottom: '16px' }}>
             <label style={labelStyle}>Select City:</label>
             <select
               value={currentSelection.city}
-              onChange={(e) => setCurrentSelection({ 
-                ...currentSelection, 
-                city: e.target.value, 
-                district: '', 
-                stop: '' 
-              })}
+              onChange={(e) => {
+                const selectedCityId = e.target.value;
+                setCurrentSelection({
+                  ...currentSelection,
+                  city: selectedCityId,
+                  district: '',
+                  stop: ''
+                });
+                // Update formData with the selected city ID
+                setFormData(prev => ({
+                  ...prev,
+                  city: selectedCityId,
+                  // Optional: Clear district and stops if needed
+                  districts: [],
+                  stops: []
+                }));
+              }}
               style={selectStyle}
             >
               <option value="">Select a City</option>
@@ -188,10 +201,10 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
               <label style={labelStyle}>Select District:</label>
               <select
                 value={currentSelection.district}
-                onChange={(e) => setCurrentSelection({ 
-                  ...currentSelection, 
-                  district: e.target.value, 
-                  stop: '' 
+                onChange={(e) => setCurrentSelection({
+                  ...currentSelection,
+                  district: e.target.value,
+                  stop: ''
                 })}
                 style={selectStyle}
               >
@@ -234,7 +247,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
       </div>
 
       {/* Right Column - Selected Stops */}
-      <div style={{ 
+      <div style={{
         display: 'flex',
         flexDirection: 'column',
         gap: '16px',
@@ -250,7 +263,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {formData.stops.map((stopId, index) => {
                 const { city, district, stop } = getStopLocationInfo(stopId);
-                
+
                 return (
                   <div key={`${stopId}-${index}`} style={stopCardStyle}>
                     <div style={{ flexGrow: 1 }}>
@@ -303,10 +316,10 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
             </div>
           </>
         ) : (
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             height: '100%',
             color: '#64748b'
           }}>
@@ -316,7 +329,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
       </div>
 
       {/* Submit Button - Full width at bottom */}
-      <div style={{ 
+      <div style={{
         gridColumn: '1 / -1',
         borderTop: '1px solid #e2e8f0',
         paddingTop: '20px'
@@ -335,7 +348,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
 
 // Style variables
 const labelStyle = {
-  display: 'block', 
+  display: 'block',
   marginBottom: '8px',
   fontWeight: '500',
   color: '#475569'
@@ -394,8 +407,8 @@ const stopCardStyle = {
 };
 
 const locationStyle = {
-  fontSize: '12px', 
-  color: '#64748b', 
+  fontSize: '12px',
+  color: '#64748b',
   marginLeft: '8px',
   fontWeight: '400'
 };

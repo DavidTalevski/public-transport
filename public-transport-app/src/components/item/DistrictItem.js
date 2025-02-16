@@ -1,40 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StopList from '../list/StopList';
 import { apiService } from '../../api/api';
 
-const DistrictItem = ({ district, isSelected, onSelect, onDeleteDistrict, onUpdateStops }) => {
-  const [districtStops, setDistrictStops] = useState(district.stops);
+const DistrictItem = ({ district, isSelected, onSelect, onDeleteDistrict }) => {
+  const [districtStops, setDistrictStops] = useState([]);
+  const [isLoadingStops, setIsLoadingStops] = useState(false);
 
-  // Function to handle stop deletion
+  // Fetch stops when the district is selected
+  useEffect(() => {
+    const fetchStops = async () => {
+      if (isSelected) {
+        setIsLoadingStops(true);
+        try {
+          const response = await apiService.getDistrictStops(district._id);
+          setDistrictStops(response.data);
+        } catch (error) {
+          console.error("Error fetching stops:", error);
+        } finally {
+          setIsLoadingStops(false);
+        }
+      }
+    };
+    fetchStops();
+  }, [isSelected, district._id]);
+
+  // Handle stop deletion
   const handleDeleteStop = async (stopId) => {
     try {
-      // Delete stop using API service
       await apiService.deleteStop(stopId);
-
-      // Remove stop from the local state
-      const updatedStops = districtStops.filter(stop => stop._id !== stopId);
-      setDistrictStops(updatedStops);
-
-      // Update parent component (Cities.jsx) to reflect the changes
-      onUpdateStops(district._id, updatedStops);
+      setDistrictStops(prev => prev.filter(stop => stop._id !== stopId));
     } catch (error) {
       console.error("Error deleting stop:", error);
     }
   };
 
-  // Function to handle adding a new stop
+  // Handle adding a new stop
   const handleAddStop = async (newStop) => {
     try {
-      // Add stop using API service
       const response = await apiService.addStopToDistrict(district._id, newStop);
-      const addedStop = response.data.stop;
-
-      // Update local state with the new stop
-      const updatedStops = [...districtStops, addedStop];
-      setDistrictStops(updatedStops);
-
-      // Update parent component (Cities.jsx) to reflect the changes
-      onUpdateStops(district._id, updatedStops);
+      setDistrictStops(prev => [...prev, response.data]);
     } catch (error) {
       console.error("Error adding stop:", error);
     }
@@ -64,15 +68,16 @@ const DistrictItem = ({ district, isSelected, onSelect, onDeleteDistrict, onUpda
             Delete District
           </button>
         </div>
-
       </div>
 
       {isSelected && (
-        <StopList
-          stops={districtStops}
-          onDeleteStop={handleDeleteStop}
-          onAddStop={handleAddStop}
-        />
+        isLoadingStops 
+          ? <div>Loading stops...</div>
+          : <StopList
+              stops={districtStops}
+              onDeleteStop={handleDeleteStop}
+              onAddStop={handleAddStop}
+            />
       )}
     </div>
   );

@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const VehicleSchema = new Schema({
+    city_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'City',
+      required: true,
+      index: true
+    },
     type: {
         type: String,
         required: true
@@ -31,6 +37,6 @@ const VehicleSchema = new Schema({
         enum: ['active', 'inactive', 'under maintenance'],
         required: true
     },
-});
+}, { shardKey: { city_id: 1 } });
 
 module.exports = mongoose.model('Vehicle', VehicleSchema);
