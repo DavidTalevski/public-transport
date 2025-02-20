@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Route = require("./Route")
 const Schema = mongoose.Schema;
 
 const VehicleSchema = new Schema({
@@ -38,5 +39,11 @@ const VehicleSchema = new Schema({
         required: true
     },
 }, { shardKey: { city_id: 1 } });
+
+VehicleSchema.pre('remove', async function(next) {
+    const vehicleId = this._id;
+    await Route.deleteMany({ vehicle: vehicleId });
+    next();
+  });
 
 module.exports = mongoose.model('Vehicle', VehicleSchema);

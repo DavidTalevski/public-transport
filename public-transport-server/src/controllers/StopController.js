@@ -47,8 +47,9 @@ exports.updateStop = async (req, res) => {
 // Delete a stop
 exports.deleteStop = async (req, res) => {
   try {
-    const deletedStop = await Stop.findByIdAndDelete(req.params.id);
-    if (!deletedStop) return res.status(404).json({ message: 'Stop not found' });
+    const stop = await Stop.findById(req.params.id);
+    if (!stop) return res.status(404).json({ message: 'Stop not found' });
+    await stop.deleteOne();
     res.status(200).json({ message: 'Stop deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });

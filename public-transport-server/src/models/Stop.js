@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Route = require("./Route");
+
 const Schema = mongoose.Schema;
 
 const StopSchema = new Schema({
@@ -28,5 +30,14 @@ const StopSchema = new Schema({
     },
   },
 }, { shardKey: { city_id: 1 } });
+
+StopSchema.pre('remove', async function(next) {
+  const stopId = this._id;
+  await Route.updateMany(
+    { stops: stopId },
+    { $pull: { stops: stopId } }
+  );
+  next();
+});
 
 module.exports = mongoose.model('Stop', StopSchema);

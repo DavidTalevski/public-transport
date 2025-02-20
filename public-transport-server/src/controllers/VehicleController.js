@@ -46,8 +46,9 @@ exports.updateVehicle = async (req, res) => {
 // Delete a vehicle
 exports.deleteVehicle = async (req, res) => {
   try {
-    const deletedVehicle = await Vehicle.findByIdAndDelete(req.params.id);
-    if (!deletedVehicle) return res.status(404).json({ message: 'Vehicle not found' });
+    const vehicle = await Vehicle.findById(req.params.id);
+    if (!vehicle) return res.status(404).json({ message: 'Vehicle not found' });
+    await vehicle.deleteOne(); // Triggers pre-remove hook
     res.status(200).json({ message: 'Vehicle deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });

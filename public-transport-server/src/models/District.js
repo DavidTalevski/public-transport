@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Stop = require("./Stop")
 const Schema = mongoose.Schema;
 
 const DistrictSchema = new Schema({ 
@@ -36,5 +37,10 @@ const DistrictSchema = new Schema({
     }],
 }, { shardKey: { city_id: 1 } });
 
+DistrictSchema.pre('remove', async function(next) {
+    const districtId = this._id;
+    await Stop.deleteMany({ district: districtId });
+    next();
+  });
 
 module.exports = mongoose.model('District', DistrictSchema);

@@ -1,77 +1,82 @@
-version: '3.8'
-
 services:
-  # Config Server Replica Set (3 nodes)
-  cfg1:
-    image: mongo:8.0
-    command: mongod --configsvr --replSet cfgrs --port 27017 --bind_ip_all
+  config-server:
+    image: mongo:8.0.4
+    command: mongod --configsvr --replSet configrs --bind_ip_all
     volumes:
-      - cfg1_data:/data/db
+      - config-data:/data/configdb
     networks:
-      - mongodb-net
-
-  cfg2:
-    image: mongo:8.0
-    command: mongod --configsvr --replSet cfgrs --port 27017 --bind_ip_all
-    volumes:
-      - cfg2_data:/data/db
-    networks:
-      - mongodb-net
-
-  cfg3:
-    image: mongo:8.0
-    command: mongod --configsvr --replSet cfgrs --port 27017 --bind_ip_all
-    volumes:
-      - cfg3_data:/data/db
-    networks:
-      - mongodb-net
-
-  # Shard 1 Replica Set (3 nodes)
-  shard1a:
-    image: mongo:8.0
-    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
-    volumes:
-      - shard1a_data:/data/db
-    networks:
-      - mongodb-net
-
-  shard1b:
-    image: mongo:8.0
-    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
-    volumes:
-      - shard1b_data:/data/db
-    networks:
-      - mongodb-net
-
-  shard1c:
-    image: mongo:8.0
-    command: mongod --shardsvr --replSet shard1rs --port 27017 --bind_ip_all
-    volumes:
-      - shard1c_data:/data/db
-    networks:
-      - mongodb-net
-
-  # Mongos Router
-  mongos:
-    image: mongo:8.0
-    command: mongos --configdb cfgrs/cfg1:27017,cfg2:27017,cfg3:27017 --bind_ip_all
+      mongo-network:
+        aliases:
+          - cfg-srv
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27019", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
     ports:
-      - "27017:27017"
-    depends_on:
-      - cfg1
-      - cfg2
-      - cfg3
+      - "27019:27019"
+
+  shard1:
+    image: mongo:8.0.4
+    command: mongod --shardsvr --replSet shard1rs --bind_ip_all
+    volumes:
+      - shard1-data:/data/db
     networks:
-      - mongodb-net
+      mongo-network:
+        aliases:
+          - s1
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27018", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+    ports:
+      - "27018:27018"
+
+  shard2:
+    image: mongo:8.0.4
+    command: mongod --shardsvr --replSet shard2rs --bind_ip_all
+    volumes:
+      - shard2-data:/data/db
+    networks:
+      mongo-network:
+        aliases:
+          - s2
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27018", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+    ports:
+      - "27020:27018"
+
+  mongos:
+    image: mongo:8.0.4
+    command: mongos --configdb configrs/config-server:27019 --bind_ip_all
+    depends_on:
+      config-server:
+        condition: service_healthy
+      shard1:
+        condition: service_healthy
+      shard2:
+        condition: service_healthy
+    volumes:
+      - ${MONGO_DUMP_PATH:-./mongo-dump}:/docker-mongo-dump
+    networks:
+      - mongo-network
+    ports:
+      - "27021:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--port", "27017", "--eval", "sh.status()"]
+      interval: 10s
+      timeout: 30s
+      retries: 10
 
 volumes:
-  cfg1_data:
-  cfg2_data:
-  cfg3_data:
-  shard1a_data:
-  shard1b_data:
-  shard1c_data:
+  config-data:
+  shard1-data:
+  shard2-data:
 
 networks:
-  mongodb-net:
+  mongo-network:
     driver: bridge
