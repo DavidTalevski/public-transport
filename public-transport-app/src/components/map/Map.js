@@ -17,6 +17,7 @@ const Map = ({ stops, routes }) => {
   const [routePath, setRoutePath] = useState(null);
   const mapRef = useRef();
   const center = [41.6086, 21.7453];
+  const padding = 45;
 
   useEffect(() => {
     const fetchRoutePath = async () => {
@@ -41,7 +42,7 @@ const Map = ({ stops, routes }) => {
           // Update map view to show the route
           if (path.length > 0 && mapRef.current) {
             const bounds = L.latLngBounds(path);
-            mapRef.current.flyToBounds(bounds, { padding: [50, 50] });
+            mapRef.current.flyToBounds(bounds, { padding: [padding, padding] });
           }
         }
       } catch (error) {
@@ -51,6 +52,18 @@ const Map = ({ stops, routes }) => {
 
     fetchRoutePath();
   }, [selectedRoute]);
+
+  useEffect(() => {
+    if (stops.length > 0 && mapRef.current) {
+      const validStops = stops.filter(stop => stop.location?.latitude && stop.location?.longitude);
+      if (validStops.length > 0) {
+        const bounds = L.latLngBounds(
+          validStops.map(stop => [stop.location.latitude, stop.location.longitude])
+        );
+        mapRef.current.flyToBounds(bounds, { padding: [padding, padding] });
+      }
+    }
+  }, [stops]);
 
   return (
     <div style={{
