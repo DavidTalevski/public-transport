@@ -10,8 +10,8 @@ const StatCard = ({ title, value, color, children }) => (
         <h3 style={{ margin: '0 0 10px', color: '#666' }}>{title}</h3>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
             <div style={{
-                width: '50px',
-                height: '50px',
+                width: '60px',
+                height: '60px',
                 borderRadius: '50%',
                 background: color,
                 display: 'flex',

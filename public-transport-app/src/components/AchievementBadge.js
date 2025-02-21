@@ -3,6 +3,7 @@ const AchievementBadge = ({ icon, title, description, unlocked }) => (
     <div style={{
       minWidth: '160px',
       padding: '15px',
+      margin: '12px',
       background: unlocked ? '#f8f9fa' : '#e9ecef',
       borderRadius: '8px',
       textAlign: 'center',

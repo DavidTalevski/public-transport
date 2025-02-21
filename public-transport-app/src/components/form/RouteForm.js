@@ -12,6 +12,8 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
     stop: ''
   });
 
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,6 +42,16 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
     }
   }, [currentSelection.district, districts]);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(currentSelection)
+    setFormData(prev => ({
+      ...prev,
+      city: currentSelection.city
+    }))
+    onSubmit()
+  }
+
   const handleAddStop = () => {
     if (currentSelection.stop) {
       setFormData(prev => ({
@@ -57,17 +69,15 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
   };
 
   const getStopLocationInfo = (stopId) => {
-    for (const city of cities) {
-      for (const district of districts) {
-        const stop = district.stops?.find(s => s._id === stopId);
-        if (stop) return { city: city.name, district: district.name, stop };
-      }
+    for (const district of districts) {
+      const stop = district.stops?.find(s => s._id === stopId);
+      if (stop) return { city: cities.find(c => c._id === district.city_id).name, district: district.name, stop };
     }
     return { city: 'Unknown', district: 'Unknown', stop: null };
   };
 
   return (
-    <form onSubmit={onSubmit} style={formStyle}>
+    <form onSubmit={handleSubmit} style={formStyle}>
       <h2 style={headerStyle}>
         {formData._id ? 'Edit Route' : 'Create New Route'}
       </h2>
@@ -105,17 +115,24 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
 
           <div style={selectionPanel}>
             <h3 style={sectionTitleStyle}>Add Stops</h3>
-            
+
             {/* City Selection */}
             <div style={inputGroup}>
               <label style={labelStyle}>Select City:</label>
               <select
                 value={currentSelection.city}
-                onChange={(e) => setCurrentSelection({
-                  city: e.target.value,
-                  district: '',
-                  stop: ''
-                })}
+                onChange={(e) => {
+                  setCurrentSelection({
+                    city: e.target.value,
+                    district: '',
+                    stop: ''
+                  })
+
+                  setFormData(prev => ({
+                    ...prev,
+                    city: e.target.value
+                  }))
+                }}
                 style={selectStyle}
               >
                 <option value="">Select a City</option>

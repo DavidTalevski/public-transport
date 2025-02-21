@@ -34,8 +34,8 @@ const Routes = () => {
   };
 
   const handleAddRoute = async (e) => {
-    e.preventDefault();
     try {
+      console.log(newRouteFormData);
       await apiService.createRoute(newRouteFormData.city, newRouteFormData);
       fetchRoutes();
       setIsRouteModalOpen(false);
