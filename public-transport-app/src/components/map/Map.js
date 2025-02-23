@@ -1,7 +1,6 @@
-// Map.jsx
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import 'leaflet/dist/leaflet.css';
 
 // Fix leaflet marker icons
@@ -18,6 +17,18 @@ const Map = ({ stops, routes }) => {
   const mapRef = useRef();
   const center = [41.6086, 21.7453];
   const padding = 45;
+
+    // Define icons
+    const defaultIcon = useMemo(() => new L.Icon.Default(), []);
+    const dimmedIcon = useMemo(() => new L.Icon.Default({
+      className: 'dimmed-marker'
+    }), []);
+
+  // Reset selected route and path when stops or routes change (new city selected)
+  useEffect(() => {
+    setSelectedRoute(null);
+    setRoutePath(null);
+  }, [stops, routes]);
 
   useEffect(() => {
     const fetchRoutePath = async () => {
@@ -90,14 +101,21 @@ const Map = ({ stops, routes }) => {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
 
-          {/* All Stops */}
-          {stops.map((stop, index) => (
-            stop.location?.latitude && stop.location?.longitude && (
-              <Marker
-                key={`all-stop-${stop._id}-${index}`} // Unique key with index
-                position={[stop.location.latitude, stop.location.longitude]}
-              >
-                <Popup>
+
+          {/* All Stops with conditional opacity */}
+          {stops.map((stop, index) => {
+            const isDimmed = selectedRoute 
+              ? !selectedRoute.stops.some(s => s._id === stop._id)
+              : false;
+
+            return (
+              stop.location?.latitude && stop.location?.longitude && (
+                <Marker
+                  key={`all-stop-${stop._id}-${index}`}
+                  position={[stop.location.latitude, stop.location.longitude]}
+                  icon={isDimmed ? dimmedIcon : defaultIcon}
+                >
+                  <Popup>
                   <div style={{ minWidth: '150px' }}>
                     <h4 style={{ margin: '0 0 8px' }}>{stop.name}</h4>
                     <div style={{ fontSize: '0.9em' }}>
@@ -108,7 +126,7 @@ const Map = ({ stops, routes }) => {
                 </Popup>
               </Marker>
             )
-          ))}
+          )})}
 
           {/* Selected Route Path */}
           {routePath && (
@@ -129,6 +147,7 @@ const Map = ({ stops, routes }) => {
       }}>
         <select
           onChange={(e) => setSelectedRoute(routes.find(r => r._id === e.target.value))}
+          value={selectedRoute?._id || ''}
           style={{
             width: '100%',
             padding: '8px',
@@ -144,7 +163,6 @@ const Map = ({ stops, routes }) => {
           ))}
         </select>
       </div>
-
     </div>
   );
 };

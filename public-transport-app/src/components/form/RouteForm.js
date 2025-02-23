@@ -209,7 +209,7 @@ const RouteForm = ({ formData, setFormData, onSubmit }) => {
                 {formData.stops.map((stopId, index) => {
                   const { city, district, stop } = getStopLocationInfo(stopId);
                   return (
-                    <div key={stopId} style={stopCardStyle}>
+                    <div key={`${stopId}-${index}`} style={stopCardStyle}>
                       <div style={stopInfo}>
                         <div style={stopTitle}>
                           {index + 1}. {stop?.name}
